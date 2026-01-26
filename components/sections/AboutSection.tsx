@@ -84,7 +84,7 @@ export function AboutSection() {
               className="space-y-4 font-body text-lg leading-relaxed opacity-90"
             >
               <p>
-                Inspired by the "Shady Lady" trees of the Mediterranean—the majestic 
+                Inspired by the &ldquo;Shady Lady&rdquo; trees of the Mediterranean—the majestic 
                 <span className="italic text-accent-gold"> Bucida buceras</span>—our restaurant 
                 embodies the dual character of these remarkable trees.
               </p>
@@ -96,7 +96,7 @@ export function AboutSection() {
               </p>
               
               <p>
-                Our chef's table approach means every dish is crafted with intention, 
+                Our chef&rsquo;s table approach means every dish is crafted with intention, 
                 sourcing ingredients from family farms across Greece, Spain, and Italy. 
                 We bring the warmth of Mediterranean hospitality to the heart of North London.
               </p>
