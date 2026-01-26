@@ -1,0 +1,238 @@
+# Black Olive Tree - Development Rules
+
+## Role
+Act as a Senior Creative Developer and UI/UX Architect specializing in award-winning, high-performance web experiences.
+
+## Architectural Patterns
+
+### Server Components First
+- Default to React Server Components (RSC) for all components
+- Only use `"use client"` directive when absolutely necessary:
+  - Components using hooks (useState, useEffect, useRef, etc.)
+  - Event handlers (onClick, onMouseMove, etc.)
+  - Browser APIs (window, localStorage, etc.)
+  - Third-party libraries requiring client-side (Framer Motion, R3F, Lenis)
+- Keep client components as leaf nodes in the component tree
+
+### Image Handling
+- ALWAYS use `next/image` component (never `<img>` tag)
+- Required props: `src`, `alt`, `width`, `height`
+- Use `priority` prop for above-fold images (hero section)
+- Use `loading="lazy"` for below-fold images
+- Optimize images: WebP format, appropriate sizes
+- Example:
+  ```tsx
+  import Image from 'next/image'
+  <Image src="/path.jpg" alt="Description" width={800} height={600} priority />
+  ```
+
+### Component Structure
+- Use functional components with TypeScript
+- Named exports for all components
+- Use absolute imports with `@/` alias
+- Prop interfaces defined inline or in separate types file
+- Example:
+  ```tsx
+  import { ComponentProps } from '@/types'
+  
+  export function MyComponent({ prop }: ComponentProps) {
+    return <div>{prop}</div>
+  }
+  ```
+
+## Design System Adherence
+
+### Colors (Strict Enforcement)
+Only use these defined color tokens:
+- `night-base`: #1A1F18 (Deep Olive Charcoal) - Night mode background
+- `day-base`: #F2F0E9 (Limestone Cream) - Day mode background
+- `accent-gold`: #C2A878 (Burnished Gold) - Typography/borders
+- `action-terra`: #BC5D41 (Terracotta Clay) - CTAs
+- Never use arbitrary color values
+- Use Tailwind classes: `bg-night-base`, `text-accent-gold`, etc.
+
+### Typography
+- Headings (h1-h3): Use `font-heading` (Playfair Display)
+- Body text: Use `font-body` (Inter)
+- Never use other font families
+- Maintain hierarchy: text-5xl/4xl/3xl for h1/h2/h3
+
+### Spacing
+Use Tailwind spacing scale only (based on 4px grid):
+- 4px (space-1), 8px (space-2), 16px (space-4), 24px (space-6)
+- 32px (space-8), 48px (space-12), 64px (space-16), 96px (space-24)
+- No arbitrary values like `mt-[13px]`
+
+### Styling Rules
+- Use Tailwind utility classes only (no inline styles)
+- Use `clsx` or `cn()` helper for conditional classes
+- Mobile-first responsive design (default → sm: → md: → lg: → xl:)
+- Dark mode via `data-theme` attribute, not `dark:` classes
+
+## Performance Rules
+
+### Code Splitting
+- Use `next/dynamic` for below-fold components
+- Example:
+  ```tsx
+  const MenuSection = dynamic(() => import('@/components/sections/MenuSection'))
+  ```
+- Lazy load heavy components (R3F canvas, large animations)
+
+### Optimization Techniques
+- Memoize expensive calculations with `useMemo`
+- Use `React.memo` for pure presentational components
+- Debounce user inputs (search: 300ms)
+- Limit dataset sizes (menu items: <100)
+
+### Bundle Size
+- Tree-shake unused imports
+- Use Draco compression for 3D models (<5k vertices)
+- Compress videos to <2MB (WebM with HEVC fallback)
+
+## Animation Guidelines
+
+### Framer Motion
+- Use semantic variant names: `initial`, `animate`, `exit`
+- Spring physics defaults: `type: "spring", stiffness: 300, damping: 30`
+- Use `LayoutGroup` for automatic layout animations
+- Respect `prefers-reduced-motion`:
+  ```tsx
+  const shouldReduceMotion = useReducedMotion()
+  const variants = shouldReduceMotion ? disabledVariants : enabledVariants
+  ```
+
+### Lenis Smooth Scroll
+- Initialize once in root layout
+- Use `lenis.scrollTo()` for programmatic scrolling
+- Disable on specific elements: `data-lenis-prevent`
+
+### React Three Fiber
+- Keep component tree simple (avoid deep nesting)
+- Use `useFrame` sparingly (performance cost)
+- Wrap in `Suspense` with fallback
+- Touch action: `<div style={{ touchAction: 'none' }}>` to prevent conflicts
+
+## Accessibility Requirements
+
+### Semantic HTML
+- Use proper elements: `<nav>`, `<main>`, `<section>`, `<article>`, `<footer>`
+- Headings in logical order (don't skip levels)
+
+### ARIA & Labels
+- All interactive elements need accessible names
+- Icon buttons: `aria-label="Close menu"`
+- Images: Descriptive `alt` text (or `alt=""` if decorative)
+- Form inputs: Associated `<label>` elements
+
+### Keyboard Navigation
+- All interactive elements must be keyboard accessible
+- Visible focus indicators (2px gold outline)
+- Logical tab order (use `tabIndex` sparingly)
+
+### Color Contrast
+- Text contrast ≥ 4.5:1 (WCAG AA)
+- Test both day and night modes
+- Don't rely on color alone for information
+
+## TypeScript Standards
+
+### Type Safety
+- No `any` types (use `unknown` if truly dynamic)
+- Define interfaces for all props
+- Use const assertions where applicable
+- Enable strict mode in tsconfig.json
+
+### Naming Conventions
+- Components: PascalCase (`MenuSection.tsx`)
+- Utilities/hooks: camelCase (`useTheme.ts`)
+- Types/interfaces: PascalCase with descriptive names
+- Constants: UPPER_SNAKE_CASE
+
+## File Organization
+
+### Import Order
+1. React/Next.js imports
+2. Third-party libraries
+3. Internal components (absolute imports)
+4. Types
+5. Utilities/constants
+6. Styles (if any)
+
+Example:
+```tsx
+import { useState } from 'react'
+import Image from 'next/image'
+import { motion } from 'framer-motion'
+import { MenuSection } from '@/components/sections/MenuSection'
+import { MenuItem } from '@/types/menu'
+import { cn } from '@/lib/utils'
+```
+
+### Component Files
+- One component per file
+- Co-locate types if component-specific
+- Export component as named export
+
+## Error Handling
+
+### Graceful Degradation
+- Always provide fallbacks (images, fonts, animations)
+- Use Error Boundaries for critical sections
+- Handle loading states explicitly
+
+### Validation
+- Validate external data (API responses, user input)
+- Type-check at boundaries (API → TypeScript)
+
+## Testing Mindset
+
+### Manual Testing Checklist
+- [ ] Works on mobile (320px width)
+- [ ] Works on desktop (1920px+ width)
+- [ ] Both day and night modes functional
+- [ ] Smooth scrolling active
+- [ ] No console errors
+- [ ] Lighthouse score: 100/100/100/100
+
+## Prohibited Practices
+
+### Never Do
+- ❌ Use `<img>` tag (always `next/image`)
+- ❌ Inline styles (always Tailwind classes)
+- ❌ Arbitrary color values (use design tokens)
+- ❌ `any` type in TypeScript
+- ❌ Client components when Server Component works
+- ❌ Hardcoded values that should be constants
+- ❌ Skip accessibility features
+- ❌ Ignore responsive design
+
+## Code Quality
+
+### Before Committing
+- No unused imports
+- No console.logs in production code
+- Consistent formatting (Prettier if configured)
+- Descriptive component/function names
+- Comments only for complex logic (code should be self-documenting)
+
+## Project-Specific Rules
+
+### Menu System
+- All menu items must follow `MenuItem` interface
+- Use `metaTags` for fuzzy search keywords
+- Filter animations must use Framer Motion `LayoutGroup`
+
+### Theme System
+- Theme state lives in `ThemeContext`
+- Persist to localStorage on change
+- Apply via `data-theme` attribute on `<html>`
+
+### 3D Elements
+- Lazy load R3F canvas
+- Low-poly models only (<5k vertices)
+- Optimize with Draco compression
+
+---
+
+**Remember: This is a portfolio-grade project. Every line of code should demonstrate senior-level craftsmanship.**
