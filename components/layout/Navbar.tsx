@@ -1,16 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ThemeToggle } from './ThemeToggle'
-import { MagneticButton } from '@/components/ui/MagneticButton'
-import { useTheme } from '@/context/ThemeContext'
-import { cn } from '@/lib/utils'
 import { motion, useScroll } from 'framer-motion'
+import { MagneticButton } from '@/components/ui/MagneticButton'
+import { cn } from '@/lib/utils'
 
 export function Navbar() {
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const { theme } = useTheme()
   const { scrollY } = useScroll()
 
   useEffect(() => {
@@ -45,8 +42,7 @@ export function Navbar() {
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        scrolled && theme === 'night' && 'bg-night-base/80 backdrop-blur-md border-b border-white/10',
-        scrolled && theme === 'day' && 'bg-day-base/80 backdrop-blur-md border-b border-black/5',
+        scrolled && 'bg-[#1A1F18]/80 backdrop-blur-md border-b border-white/10',
         !scrolled && 'bg-transparent'
       )}
     >
@@ -56,16 +52,22 @@ export function Navbar() {
             Black Olive Tree
           </div>
 
-          <div className="hidden md:flex items-center gap-8">
-            <NavLink href="#story">Story</NavLink>
-            <NavLink href="#menu">Menu</NavLink>
-            <NavLink href="#about">About</NavLink>
-            <NavLink href="#contact">Contact</NavLink>
-          </div>
+          <div className="flex items-center gap-8">
+            <div className="hidden md:flex items-center gap-6">
+              <a href="#menu" className="font-body text-sm hover:text-accent-gold transition-colors duration-200">
+                Menu
+              </a>
+              <a href="#about" className="font-body text-sm hover:text-accent-gold transition-colors duration-200">
+                About
+              </a>
+              <a href="#contact" className="font-body text-sm hover:text-accent-gold transition-colors duration-200">
+                Contact
+              </a>
+            </div>
 
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            <MagneticButton>Book Table</MagneticButton>
+            <MagneticButton onClick={() => console.log('Book table')}>
+              Book Table
+            </MagneticButton>
           </div>
         </div>
       </div>

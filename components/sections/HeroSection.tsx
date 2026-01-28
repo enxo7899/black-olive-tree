@@ -1,33 +1,31 @@
 'use client'
 
+import { Suspense } from 'react'
 import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
-import { Suspense } from 'react'
 
 const Scene = dynamic(() => import('@/components/three/Scene').then(mod => ({ default: mod.Scene })), {
   ssr: false,
-  loading: () => null,
 })
 
-const letterVariants = {
-  hidden: { opacity: 0, y: 100 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.05,
-      duration: 0.8,
-      ease: [0.6, 0.01, 0.05, 0.95],
-    },
-  }),
-}
-
 export function HeroSection() {
-  const title = "Black Olive Tree"
-  const letters = title.split('')
+  const title = 'Black Olive Tree'
+
+  const letterVariants = {
+    hidden: { opacity: 0, y: 100 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.05,
+        duration: 0.8,
+        ease: [0.6, 0.01, 0.05, 0.95],
+      },
+    }),
+  }
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-[100dvh] overflow-hidden">
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
         <video
@@ -35,77 +33,96 @@ export function HeroSection() {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          className="absolute inset-0 w-full h-full object-cover opacity-20"
         >
-          <source
-            src="https://cdn.coverr.co/videos/coverr-olive-tree-branches-moving-in-the-wind-5388/1080p.mp4"
-            type="video/mp4"
-          />
+          <source src="https://cdn.coverr.co/videos/coverr-olive-tree-branches-moving-in-the-wind-5388/1080p.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-day-base/50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1A1F18]/50 to-[#1A1F18]" />
       </div>
 
-      {/* 3D Scene */}
-      <div className="absolute inset-0 z-10 opacity-30">
-        <Suspense fallback={null}>
-          <Scene />
-        </Suspense>
-      </div>
+      {/* Layout Container - Mobile First */}
+      <div className="relative z-10 h-full flex flex-col-reverse md:grid md:grid-cols-2 md:gap-8 items-center">
+        
+        {/* Text Content - Top on Mobile, Left on Desktop */}
+        <div className="relative z-20 flex flex-col items-center md:items-start justify-center px-6 md:px-12 pt-24 md:pt-0 pb-12 md:pb-0">
+          {/* Glow Effect Behind Text */}
+          <div className="absolute inset-0 flex items-center justify-center md:justify-start">
+            <div className="w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-accent-gold/5 blur-[100px] rounded-full" />
+          </div>
 
-      {/* Hero Content */}
-      <div className="relative z-20 h-full flex flex-col items-center justify-center px-6">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          className="text-center"
-        >
-          <h1 className="font-heading text-7xl md:text-9xl font-bold tracking-tight mb-6">
-            {letters.map((letter, i) => (
+          <motion.h1
+            initial="hidden"
+            animate="visible"
+            className="relative text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-heading text-center md:text-left mb-4 md:mb-6 leading-tight"
+          >
+            {title.split('').map((letter, index) => (
               <motion.span
-                key={i}
-                custom={i}
+                key={`${letter}-${index}`}
+                custom={index}
                 variants={letterVariants}
-                className="inline-block"
-                style={{
-                  mixBlendMode: 'overlay',
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
-                }}
+                style={{ display: 'inline-block' }}
+                className="text-[#F2F0E9]"
               >
                 {letter === ' ' ? '\u00A0' : letter}
               </motion.span>
             ))}
-          </h1>
+          </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 1 }}
-            className="text-xl md:text-2xl font-body text-accent-gold tracking-wide"
+            transition={{ delay: 1, duration: 0.8 }}
+            className="relative text-lg md:text-xl lg:text-2xl font-body text-center md:text-left max-w-xl mb-8 md:mb-12 text-[#F2F0E9]/80"
           >
             Mediterranean Soul, London Heart
           </motion.p>
-        </motion.div>
 
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2"
-        >
+          {/* Scroll Indicator - Hidden on Mobile */}
           <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="w-6 h-10 border-2 border-accent-gold rounded-full flex items-start justify-center p-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 0.8 }}
+            className="hidden md:flex flex-col items-start gap-2"
           >
+            <span className="text-sm font-body opacity-60">Scroll to explore</span>
             <motion.div
-              animate={{ y: [0, 12, 0] }}
+              animate={{ y: [0, 10, 0] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="w-1.5 h-1.5 bg-accent-gold rounded-full"
-            />
+              className="w-6 h-10 rounded-full border-2 border-accent-gold/40 flex items-start justify-center p-2"
+            >
+              <div className="w-1 h-2 bg-accent-gold rounded-full" />
+            </motion.div>
           </motion.div>
-        </motion.div>
+        </div>
+
+        {/* 3D Scene - Bottom on Mobile, Right on Desktop */}
+        <div 
+          className="relative z-10 h-[40vh] md:h-full w-full flex items-center justify-center"
+          style={{ pointerEvents: 'none' }}
+        >
+          <div className="w-full h-full scale-75 md:scale-100">
+            <Suspense fallback={null}>
+              <Scene />
+            </Suspense>
+          </div>
+        </div>
       </div>
+
+      {/* Mobile Scroll Indicator - Bottom Fixed */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 0.8 }}
+        className="md:hidden absolute bottom-6 left-0 right-0 z-30 flex justify-center"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="w-6 h-10 rounded-full border-2 border-accent-gold/40 flex items-start justify-center p-2"
+        >
+          <div className="w-1 h-2 bg-accent-gold rounded-full" />
+        </motion.div>
+      </motion.div>
     </section>
   )
 }
