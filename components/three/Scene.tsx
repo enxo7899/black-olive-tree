@@ -1,53 +1,82 @@
 'use client'
 
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import { Environment } from '@react-three/drei'
 import { OliveModel } from './OliveModel'
+import { useEffect, useState } from 'react'
+
+function ResponsiveOliveModel() {
+  const { viewport } = useThree()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    setIsMobile(viewport.width < 7)
+  }, [viewport.width])
+
+  return (
+    <group position={[0, isMobile ? 1 : 0, 0]}>
+      <OliveModel />
+    </group>
+  )
+}
+
+function ResponsiveCamera() {
+  const { camera, viewport } = useThree()
+  
+  useEffect(() => {
+    const isMobile = viewport.width < 7
+    camera.position.z = isMobile ? 7 : 5
+    camera.updateProjectionMatrix()
+  }, [camera, viewport.width])
+
+  return null
+}
 
 export function Scene() {
   return (
     <Canvas
-      camera={{ position: [0, 0, 8], fov: 50 }}
+      camera={{ position: [0, 0, 5], fov: 45 }}
+      shadows
       style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
     >
-      {/* Ambient foundation */}
-      <ambientLight intensity={0.15} />
+      <ResponsiveCamera />
+      
+      {/* Ambient base */}
+      <ambientLight intensity={0.2} />
 
-      {/* Rim Light (Backlight) - Creates halo/separation from dark background */}
-      <spotLight
-        position={[0, 0, -5]}
-        angle={0.5}
-        penumbra={0.8}
-        intensity={1.5}
-        color="#ffffff"
-        distance={15}
-      />
-
-      {/* Key Light - Warm top-left, catches specular highlights */}
-      <spotLight
-        position={[-4, 6, 3]}
-        angle={0.6}
-        penumbra={0.6}
-        intensity={0.8}
+      {/* Key Light - Warm from top-left */}
+      <directionalLight
+        position={[-5, 8, 4]}
+        intensity={1.2}
         color="#C2A878"
         castShadow
+        shadow-mapSize={[1024, 1024]}
       />
 
-      {/* Fill Light - Subtle right side */}
+      {/* Rim Light - Creates separation from background */}
+      <spotLight
+        position={[0, 4, -6]}
+        angle={0.6}
+        penumbra={0.5}
+        intensity={2}
+        color="#ffffff"
+        distance={20}
+      />
+
+      {/* Fill Light - Subtle from right */}
       <pointLight
-        position={[3, 2, 2]}
-        intensity={0.3}
+        position={[4, 2, 3]}
+        intensity={0.6}
         color="#F2F0E9"
       />
 
-      {/* The Art Piece - Centered */}
-      <OliveModel />
+      {/* Responsive Olive Model */}
+      <ResponsiveOliveModel />
 
-      {/* Environment for realistic reflections on glossy surfaces */}
+      {/* Environment for natural reflections */}
       <Environment
-        preset="city"
+        preset="sunset"
         background={false}
-        blur={1}
       />
     </Canvas>
   )

@@ -9,10 +9,8 @@ const Scene = dynamic(() => import('@/components/three/Scene').then(mod => ({ de
 })
 
 export function HeroSection() {
-  const words = ['Black', 'Olive', 'Tree']
-
   return (
-    <section className="relative h-[100dvh] w-full bg-[#1A1F18] flex items-center justify-center overflow-hidden">
+    <section className="relative h-[100dvh] w-full bg-gradient-to-b from-[#1A1F18] via-[#1A1F18] to-[#0f120e] flex items-center justify-center overflow-hidden">
       {/* LAYER 1: The 3D Backplate */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <Suspense fallback={null}>
@@ -22,45 +20,39 @@ export function HeroSection() {
 
       {/* LAYER 2: The Vignette - Focus the eye on center */}
       <div 
-        className="absolute inset-0 z-10 pointer-events-none"
+        className="absolute inset-0 z-[5] pointer-events-none"
         style={{
           background: 'radial-gradient(circle at center, transparent 0%, #1A1F18 90%)'
         }}
       />
 
-      {/* LAYER 3: The Typography */}
-      <div className="relative z-20 text-center px-4">
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, ease: [0.6, 0.01, 0.05, 0.95] }}
-          className="font-heading text-6xl md:text-8xl lg:text-9xl text-[#F2F0E9] mix-blend-overlay opacity-90 leading-[0.95] mb-8"
+      {/* LAYER 3: The Typography - Editorial Style */}
+      <div className="relative z-10 text-center px-6 md:px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ 
+            duration: 1.2,
+            ease: [0.6, 0.01, 0.05, 0.95]
+          }}
         >
-          {words.map((word, index) => (
-            <motion.span
-              key={word}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                delay: index * 0.2, 
-                duration: 0.8,
-                ease: [0.6, 0.01, 0.05, 0.95]
-              }}
-              className="inline-block mr-4 last:mr-0"
-            >
-              {word}
-            </motion.span>
-          ))}
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="text-accent-gold uppercase tracking-[0.2em] text-sm md:text-base font-body"
-        >
-          Southgate, London
-        </motion.p>
+          {/* Main Title - High Fashion */}
+          <h1 className="font-heading font-medium text-[clamp(3rem,8vw,8rem)] text-[#F2F0E9] leading-[0.85] tracking-tight drop-shadow-2xl mb-6">
+            Black Olive Tree
+          </h1>
+          
+          {/* Subtitle - Wide Tracking Editorial */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 1 }}
+            className="flex items-center justify-center gap-3 text-accent-gold uppercase tracking-[0.3em] text-xs md:text-sm font-body"
+          >
+            <span>Restaurant</span>
+            <span className="w-1 h-1 rounded-full bg-accent-gold"></span>
+            <span className="text-[#F2F0E9]/70">Southgate, London</span>
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* Scroll Indicator */}
@@ -68,7 +60,7 @@ export function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 0.8 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
       >
         <motion.div
           animate={{ y: [0, 10, 0] }}
