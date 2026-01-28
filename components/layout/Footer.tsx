@@ -139,13 +139,14 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="pt-8 border-t border-accent-gold/20 flex flex-col md:flex-row items-center justify-between gap-4"
-        >
+        <div className="pt-8 border-t border-accent-gold/20">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-col md:flex-row items-center justify-between gap-4"
+          >
           <p className="font-body text-sm opacity-60">
             © {new Date().getFullYear()} Black Olive Tree. All rights reserved.
           </p>
@@ -163,7 +164,8 @@ export function Footer() {
               Terms of Service
             </a>
           </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     </footer>
   )
