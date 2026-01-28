@@ -1,21 +1,33 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, LayoutGroup, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useSpring } from 'framer-motion'
 import { menuItems, menuCategories } from '@/lib/data/menu'
-import { MenuItem } from '@/components/ui/MenuItem'
 import { MenuCategory } from '@/types/menu'
 import { cn } from '@/lib/utils'
 
 export function MenuSection() {
   const [activeCategory, setActiveCategory] = useState<MenuCategory | 'all'>('all')
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null)
+  
+  const mouseX = useSpring(0, { stiffness: 200, damping: 20 })
+  const mouseY = useSpring(0, { stiffness: 200, damping: 20 })
 
   const filteredItems = activeCategory === 'all' 
     ? menuItems 
     : menuItems.filter(item => item.category === activeCategory)
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    mouseX.set(e.clientX)
+    mouseY.set(e.clientY)
+  }
+
   return (
-    <section id="menu" className="min-h-screen py-24 px-6">
+    <section 
+      id="menu" 
+      className="min-h-screen py-24 px-6 bg-[#1A1F18]"
+      onMouseMove={handleMouseMove}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <motion.div
@@ -23,85 +35,113 @@ export function MenuSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="font-heading text-5xl md:text-7xl mb-4 text-accent-gold">
-            Our Menu
+          <h2 className="font-heading text-5xl md:text-7xl mb-4 text-[#C2A878]">
+            The Menu
           </h2>
-          <p className="font-body text-lg opacity-80 max-w-2xl mx-auto">
-            Curated dishes celebrating Mediterranean traditions with modern London flair
+          <p className="font-body text-lg text-[#F2F0E9]/70 max-w-2xl mx-auto">
+            Mediterranean traditions refined for London
           </p>
         </motion.div>
 
-        {/* Layout: Sticky Sidebar + Grid */}
-        <div className="flex flex-col lg:flex-row gap-12">
+        {/* Layout: Sticky Sidebar + Editorial List */}
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-20">
           {/* Category Sidebar */}
-          <div className="lg:w-64 lg:sticky lg:top-32 h-fit">
-            <nav className="space-y-2">
+          <div className="lg:w-48 lg:sticky lg:top-32 h-fit">
+            <nav className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
               {menuCategories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => setActiveCategory(category.id as MenuCategory | 'all')}
                   className={cn(
-                    'w-full text-left px-6 py-4 rounded-lg font-body text-lg',
-                    'transition-all duration-200',
-                    'border border-transparent',
+                    'font-body text-sm lg:text-base uppercase tracking-wider transition-all duration-200 text-left whitespace-nowrap lg:whitespace-normal',
                     activeCategory === category.id
-                      ? 'bg-accent-gold text-night-base border-accent-gold'
-                      : 'hover:border-accent-gold/30 hover:bg-accent-gold/5'
+                      ? 'text-[#C2A878]'
+                      : 'text-[#F2F0E9]/50 hover:text-[#F2F0E9]'
                   )}
                 >
-                  <div className="flex items-center justify-between">
-                    <span>{category.name}</span>
-                    <span className="text-sm opacity-60">{category.count}</span>
-                  </div>
+                  {category.name}
                 </button>
               ))}
             </nav>
-
-            {/* Filter Hint */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="mt-8 p-4 rounded-lg bg-accent-gold/5 border border-accent-gold/20"
-            >
-              <p className="text-xs font-body opacity-70">
-                Click categories to filter. Watch the items animate smoothly into place.
-              </p>
-            </motion.div>
           </div>
 
-          {/* Menu Grid */}
-          <div className="flex-1">
-            <LayoutGroup>
+          {/* Editorial Menu List */}
+          <div className="flex-1 relative">
+            <AnimatePresence mode="wait">
               <motion.div
-                layout
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                key={activeCategory}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-1"
               >
-                <AnimatePresence mode="popLayout">
-                  {filteredItems.map((item) => (
-                    <MenuItem key={item.id} item={item} />
-                  ))}
-                </AnimatePresence>
+                {filteredItems.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    onMouseEnter={() => setHoveredItem(item.id)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                    className="group cursor-pointer py-6 border-b border-dotted border-[#F2F0E9]/20 transition-colors hover:border-[#C2A878]/50"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <h3 className="font-heading text-2xl md:text-3xl text-[#F2F0E9] mb-2 group-hover:text-[#C2A878] transition-colors">
+                          {item.name}
+                        </h3>
+                        <p className="font-body text-sm md:text-base text-[#F2F0E9]/60 leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                      <div className="font-heading text-xl md:text-2xl text-[#C2A878] whitespace-nowrap">
+                        £{item.price.toFixed(2)}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </motion.div>
-            </LayoutGroup>
+            </AnimatePresence>
 
             {/* Empty State */}
             {filteredItems.length === 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-20"
-              >
-                <p className="font-body text-lg opacity-60">
-                  No items found in this category
+              <div className="text-center py-20">
+                <p className="font-body text-lg text-[#F2F0E9]/50">
+                  No items in this category
                 </p>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Floating Image on Hover (Desktop Only) - Fixed Position with Spring */}
+      <AnimatePresence>
+        {hoveredItem && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              x: mouseX,
+              y: mouseY,
+              translateX: '20px',
+              translateY: '-100px',
+            }}
+            className="hidden lg:block fixed pointer-events-none z-50"
+          >
+            <div className="w-64 h-64 rounded-lg bg-[#C2A878]/10 border border-[#C2A878]/30 flex items-center justify-center backdrop-blur-sm">
+              <p className="text-[#C2A878]/50 font-body text-sm">
+                Dish Image
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }

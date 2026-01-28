@@ -1,141 +1,144 @@
 'use client'
 
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import Image from 'next/image'
-import { MagneticButton } from '@/components/ui/MagneticButton'
+import { motion } from 'framer-motion'
 
 export function AboutSection() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'end start'],
-  })
-
-  const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
-
   return (
-    <section id="about" ref={containerRef} className="min-h-screen py-24 px-6">
+    <section id="about" className="relative min-h-screen py-32 px-6 bg-[#1A1F18] overflow-hidden">
+      {/* Subtle Olive Branch Background */}
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
+        <svg
+          viewBox="0 0 800 800"
+          className="w-full h-full"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M200 400 Q300 350 400 380 T600 400"
+            stroke="#F2F0E9"
+            strokeWidth="3"
+            fill="none"
+          />
+          <ellipse cx="250" cy="360" rx="20" ry="40" fill="#F2F0E9" opacity="0.5" />
+          <ellipse cx="350" cy="340" rx="22" ry="42" fill="#F2F0E9" opacity="0.5" />
+          <ellipse cx="450" cy="370" rx="20" ry="40" fill="#F2F0E9" opacity="0.5" />
+          <ellipse cx="550" cy="380" rx="21" ry="41" fill="#F2F0E9" opacity="0.5" />
+        </svg>
+      </div>
+
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Parallax Image */}
+        {/* Magazine Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          {/* Left: Large Typography */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative h-[600px] rounded-lg overflow-hidden"
+            className="space-y-8"
           >
-            <motion.div
-              style={{ y: imageY }}
-              className="relative h-[120%] w-full"
-            >
-              <Image
-                src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80"
-                alt="Mediterranean restaurant interior"
-                fill
-                className="object-cover"
-              />
-            </motion.div>
-            
-            {/* Overlay gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-night-base/50 to-transparent" />
-            
-            {/* Decorative frame */}
-            <div className="absolute inset-4 border-2 border-accent-gold/30 rounded-lg pointer-events-none" />
-          </motion.div>
-
-          {/* Right: Typography Content */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-6"
-          >
-            <div className="space-y-4">
+            <div>
               <motion.span
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
-                className="text-sm font-body tracking-widest uppercase text-accent-gold"
+                transition={{ delay: 0.2 }}
+                className="text-xs font-body tracking-[0.3em] uppercase text-[#C2A878] block mb-6"
               >
-                Our Story
+                Our Roots
               </motion.span>
               
               <motion.h2
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-                className="font-heading text-4xl md:text-6xl leading-tight"
+                transition={{ delay: 0.3 }}
+                className="font-heading text-5xl md:text-7xl lg:text-8xl text-[#F2F0E9] leading-[0.9] mb-8"
               >
                 From the Earth to Southgate
               </motion.h2>
             </div>
 
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="font-body text-lg md:text-xl text-[#F2F0E9]/70 leading-relaxed max-w-xl"
+            >
+              Named after the <span className="italic text-[#C2A878]">Bucida buceras</span>—the 
+              "Black Olive Tree" of the Mediterranean—we embody the quiet strength and natural 
+              hospitality of these ancient groves. From morning light to evening shadow, we are 
+              your gathering place.
+            </motion.p>
+
+            {/* Stats Row */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.5 }}
-              className="space-y-4 font-body text-lg leading-relaxed opacity-90"
+              className="flex gap-12 pt-8"
             >
-              <p>
-                Inspired by the &ldquo;Shady Lady&rdquo; trees of the Mediterranean—the majestic 
-                <span className="italic text-accent-gold"> Bucida buceras</span>—our restaurant 
-                embodies the dual character of these remarkable trees.
-              </p>
-              
-              <p>
-                By day, we offer shelter and calm, a place to gather beneath dappled light. 
-                By evening, we transform into a lively social hub where stories are shared 
-                over handcrafted cocktails and mezze platters.
-              </p>
-              
-              <p>
-                Our chef&rsquo;s table approach means every dish is crafted with intention, 
-                sourcing ingredients from family farms across Greece, Spain, and Italy. 
-                We bring the warmth of Mediterranean hospitality to the heart of North London.
-              </p>
+              <div>
+                <div className="font-heading text-2xl text-[#C2A878]">Est. 2024</div>
+                <div className="font-body text-sm text-[#F2F0E9]/50 uppercase tracking-wider mt-1">
+                  Founded
+                </div>
+              </div>
+              <div>
+                <div className="font-heading text-2xl text-[#C2A878]">18 The Broadway</div>
+                <div className="font-body text-sm text-[#F2F0E9]/50 uppercase tracking-wider mt-1">
+                  Southgate
+                </div>
+              </div>
+              <div>
+                <div className="font-heading text-2xl text-[#C2A878]">London</div>
+                <div className="font-body text-sm text-[#F2F0E9]/50 uppercase tracking-wider mt-1">
+                  N14
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right: Image Mosaic (3 placeholder boxes) */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="grid grid-cols-2 gap-4 h-[600px]"
+          >
+            {/* Top Left - Chef Hands */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="bg-[#C2A878]/10 rounded-lg border border-[#C2A878]/20 flex items-center justify-center"
+            >
+              <p className="text-[#C2A878]/40 font-body text-sm">Chef Hands</p>
             </motion.div>
 
-            {/* Stats Grid */}
+            {/* Top Right - Ingredients (Tall) */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+              className="bg-[#C2A878]/10 rounded-lg border border-[#C2A878]/20 flex items-center justify-center row-span-2"
+            >
+              <p className="text-[#C2A878]/40 font-body text-sm">Fresh Ingredients</p>
+            </motion.div>
+
+            {/* Bottom Left - Interior Detail */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.6 }}
-              className="grid grid-cols-3 gap-6 py-8 border-y border-accent-gold/20"
+              className="bg-[#C2A878]/10 rounded-lg border border-[#C2A878]/20 flex items-center justify-center"
             >
-              <div>
-                <div className="font-heading text-3xl text-accent-gold">12+</div>
-                <div className="font-body text-sm opacity-70">Years Experience</div>
-              </div>
-              <div>
-                <div className="font-heading text-3xl text-accent-gold">50+</div>
-                <div className="font-body text-sm opacity-70">Signature Dishes</div>
-              </div>
-              <div>
-                <div className="font-heading text-3xl text-accent-gold">5★</div>
-                <div className="font-body text-sm opacity-70">Average Rating</div>
-              </div>
-            </motion.div>
-
-            {/* CTA Button - Outline Variant */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.7 }}
-            >
-              <button
-                className="px-8 py-4 rounded-full font-body text-sm tracking-wide border-2 border-accent-gold text-accent-gold transition-all duration-200 hover:bg-accent-gold hover:text-night-base"
-              >
-                Meet the Team
-              </button>
+              <p className="text-[#C2A878]/40 font-body text-sm">Interior Detail</p>
             </motion.div>
           </motion.div>
         </div>

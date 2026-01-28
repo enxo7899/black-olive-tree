@@ -3,6 +3,8 @@ import { Playfair_Display, Inter } from 'next/font/google'
 import './globals.css'
 import { SmoothScrollProvider } from '@/providers/SmoothScrollProvider'
 import { Navbar } from '@/components/layout/Navbar'
+import { CustomCursor } from '@/components/ui/CustomCursor'
+import { PageTransition } from '@/components/ui/PageTransition'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -29,6 +31,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body>
+        <PageTransition />
+        <CustomCursor />
         <SmoothScrollProvider>
           <Navbar />
           {children}
