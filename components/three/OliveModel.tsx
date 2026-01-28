@@ -1,128 +1,165 @@
 'use client'
 
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 export function OliveModel() {
   const groupRef = useRef<THREE.Group>(null)
-  const leafRef = useRef<THREE.Mesh>(null)
-  const [hovered, setHovered] = useState(false)
+  const leaf1Ref = useRef<THREE.Mesh>(null)
+  const leaf2Ref = useRef<THREE.Mesh>(null)
+  const leaf3Ref = useRef<THREE.Mesh>(null)
 
-  // Create organic leaf shape using curves
-  const leafGeometry = useMemo(() => {
+  // Create elegant S-curve branch flowing vertically
+  const branchGeometry = useMemo(() => {
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, -3, 0),
+      new THREE.Vector3(0.3, -1.5, 0.1),
+      new THREE.Vector3(-0.2, 0, -0.1),
+      new THREE.Vector3(0.1, 1.5, 0),
+      new THREE.Vector3(0, 3, 0),
+    ])
+    
+    return new THREE.TubeGeometry(curve, 32, 0.06, 12, false)
+  }, [])
+
+  // Create teardrop leaf shape
+  const createLeafGeometry = () => {
     const shape = new THREE.Shape()
     
-    // Start at bottom center of leaf
     shape.moveTo(0, 0)
-    
-    // Right side of leaf - smooth curve to tip
-    shape.quadraticCurveTo(0.15, 0.3, 0.05, 0.6)  // Control point, end point
-    shape.quadraticCurveTo(0, 0.7, 0, 0.75)       // Tip of leaf
-    
-    // Left side of leaf - mirror curve back down
-    shape.quadraticCurveTo(0, 0.7, -0.05, 0.6)
-    shape.quadraticCurveTo(-0.15, 0.3, 0, 0)      // Back to start
+    shape.quadraticCurveTo(0.2, 0.4, 0.08, 0.8)
+    shape.quadraticCurveTo(0, 1, 0, 1.1)
+    shape.quadraticCurveTo(0, 1, -0.08, 0.8)
+    shape.quadraticCurveTo(-0.2, 0.4, 0, 0)
     
     const extrudeSettings = {
       steps: 1,
-      depth: 0.02,
+      depth: 0.03,
       bevelEnabled: true,
-      bevelThickness: 0.01,
-      bevelSize: 0.01,
-      bevelSegments: 3,
+      bevelThickness: 0.015,
+      bevelSize: 0.015,
+      bevelSegments: 4,
     }
     
     return new THREE.ExtrudeGeometry(shape, extrudeSettings)
-  }, [])
+  }
 
-  // Create organic stem curve
-  const stemGeometry = useMemo(() => {
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0.05, 0.1, 0),
-      new THREE.Vector3(-0.02, 0.2, 0),
-      new THREE.Vector3(0, 0.3, 0),
-    ])
-    
-    return new THREE.TubeGeometry(curve, 12, 0.03, 8, false)
-  }, [])
+  const leafGeometry = useMemo(() => createLeafGeometry(), [])
 
   useFrame(({ clock }) => {
-    if (groupRef.current) {
-      const baseRotationSpeed = 0.2
-      const hoverMultiplier = hovered ? 2.5 : 1
-      groupRef.current.rotation.y += 0.01 * baseRotationSpeed * hoverMultiplier
+    const time = clock.getElapsedTime()
 
-      if (hovered) {
-        groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 2) * 0.3 + 0.3
-      } else {
-        groupRef.current.position.y = Math.sin(clock.getElapsedTime() * 0.5) * 0.1
-      }
+    // Gentle floating animation for entire branch
+    if (groupRef.current) {
+      groupRef.current.position.y = Math.sin(time * 0.5) * 0.15
+      groupRef.current.rotation.y += 0.003
     }
 
-    // Gentle wind effect on leaf
-    if (leafRef.current) {
-      leafRef.current.rotation.z = Math.sin(clock.getElapsedTime() * 1.5) * 0.08
-      leafRef.current.rotation.x = Math.cos(clock.getElapsedTime() * 1.2) * 0.05
+    // Subtle wind effect on leaves - different phases for natural feel
+    if (leaf1Ref.current) {
+      leaf1Ref.current.rotation.z = Math.sin(time * 1.2) * 0.08
+      leaf1Ref.current.rotation.x = Math.cos(time * 0.9) * 0.05
+    }
+    if (leaf2Ref.current) {
+      leaf2Ref.current.rotation.z = Math.sin(time * 1.4 + 1) * 0.1
+      leaf2Ref.current.rotation.x = Math.cos(time * 1.1 + 1) * 0.06
+    }
+    if (leaf3Ref.current) {
+      leaf3Ref.current.rotation.z = Math.sin(time * 1.1 + 2) * 0.09
+      leaf3Ref.current.rotation.x = Math.cos(time * 1.3 + 2) * 0.04
     }
   })
 
   return (
-    <group
-      ref={groupRef}
-      onPointerEnter={() => setHovered(true)}
-      onPointerLeave={() => setHovered(false)}
-    >
-      {/* Main Olive Body - High poly smooth sphere */}
-      <mesh scale={[1, 1.4, 1]}>
-        <sphereGeometry args={[1, 64, 64]} />
-        <meshPhysicalMaterial
-          color="#1a0f0f"
-          roughness={0.2}
-          metalness={0.1}
-          clearcoat={1.0}
-          clearcoatRoughness={0.1}
-          envMapIntensity={1.5}
-        />
-      </mesh>
-
-      {/* Organic Stem - Curved tube */}
-      <mesh position={[0, 1.4, 0]} geometry={stemGeometry}>
+    <group ref={groupRef} position={[0, 0, 0]} scale={[1.2, 1.2, 1.2]}>
+      {/* The Branch - Dark woody stem */}
+      <mesh geometry={branchGeometry}>
         <meshStandardMaterial
-          color="#3d2f1f"
-          roughness={0.7}
+          color="#1a1410"
+          roughness={0.8}
+          metalness={0.1}
         />
       </mesh>
 
-      {/* Organic Leaf - Extruded shape with curves */}
+      {/* Leaf 1 - Upper left */}
       <mesh
-        ref={leafRef}
-        position={[0.1, 1.7, 0]}
-        rotation={[0.3, 0.4, 0.2]}
-        scale={[1.2, 1.2, 1]}
+        ref={leaf1Ref}
+        position={[0.15, 1.8, 0]}
+        rotation={[0.4, 0.6, 0.3]}
+        scale={[0.8, 0.8, 1]}
         geometry={leafGeometry}
       >
-        <meshStandardMaterial
-          color="#2D382B"
-          roughness={0.6}
+        <meshPhysicalMaterial
+          color="#1a1f18"
+          roughness={0.2}
+          metalness={0.05}
+          transmission={0.1}
+          clearcoat={1.0}
+          clearcoatRoughness={0.1}
           side={THREE.DoubleSide}
         />
       </mesh>
 
-      {/* Rembrandt Lighting - Dramatic spotlight on olive */}
-      <spotLight
-        position={[3, 4, 2]}
-        angle={0.4}
-        penumbra={0.5}
-        intensity={2}
-        color="#C2A878"
-        castShadow
-        target-position={[0, 0, 0]}
-      />
-      
-      {/* Fill light - subtle */}
-      <pointLight position={[-2, 1, -1]} intensity={0.3} color="#F2F0E9" />
+      {/* Leaf 2 - Middle right */}
+      <mesh
+        ref={leaf2Ref}
+        position={[-0.2, 0.5, 0.1]}
+        rotation={[0.2, -0.5, -0.2]}
+        scale={[0.9, 0.9, 1]}
+        geometry={leafGeometry}
+      >
+        <meshPhysicalMaterial
+          color="#1a1f18"
+          roughness={0.2}
+          metalness={0.05}
+          transmission={0.1}
+          clearcoat={1.0}
+          clearcoatRoughness={0.1}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      {/* Leaf 3 - Lower left */}
+      <mesh
+        ref={leaf3Ref}
+        position={[0.25, -0.8, -0.05]}
+        rotation={[0.3, 0.7, 0.4]}
+        scale={[0.85, 0.85, 1]}
+        geometry={leafGeometry}
+      >
+        <meshPhysicalMaterial
+          color="#1a1f18"
+          roughness={0.2}
+          metalness={0.05}
+          transmission={0.1}
+          clearcoat={1.0}
+          clearcoatRoughness={0.1}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      {/* The Olive - Single jewel at the tip */}
+      <mesh position={[0, 3.2, 0]} scale={[0.35, 0.5, 0.35]}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <meshPhysicalMaterial
+          color="#0a0a0a"
+          roughness={0.1}
+          metalness={0.05}
+          clearcoat={1.0}
+          clearcoatRoughness={0.05}
+          envMapIntensity={2}
+        />
+      </mesh>
+
+      {/* Small stem connecting olive to branch */}
+      <mesh position={[0, 2.95, 0]} rotation={[0, 0, 0]}>
+        <cylinderGeometry args={[0.02, 0.03, 0.15, 8]} />
+        <meshStandardMaterial
+          color="#2d2520"
+          roughness={0.7}
+        />
+      </mesh>
     </group>
   )
 }
