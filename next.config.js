@@ -11,6 +11,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cdn.coverr.co',
       },
+      {
+        protocol: 'https',
+        hostname: 'assets.mixkit.co',
+      },
     ],
   },
 }

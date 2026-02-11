@@ -37,3 +37,45 @@
     text-wrap: balance;
   }
 }
+
+/* Mobile Menu Ticker Animation */
+.ticker-wrapper {
+  overflow: hidden;
+  width: 100%;
+}
+
+.ticker-content {
+  display: inline-flex;
+  white-space: nowrap;
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker 30s linear infinite;
+}
+
+/* Marquee Animation for Reviews */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
