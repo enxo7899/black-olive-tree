@@ -66,7 +66,7 @@ export function AboutSection() {
               className="font-body text-lg md:text-xl text-[#F2F0E9]/70 leading-relaxed max-w-xl"
             >
               Named after the <span className="italic text-[#C2A878]">Bucida buceras</span>—the 
-              "Black Olive Tree" of the Mediterranean—we embody the quiet strength and natural 
+              &quot;Black Olive Tree&quot; of the Mediterranean—we embody the quiet strength and natural 
               hospitality of these ancient groves. From morning light to evening shadow, we are 
               your gathering place.
             </motion.p>

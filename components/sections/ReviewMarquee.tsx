@@ -147,7 +147,7 @@ export function ReviewMarquee() {
               >
                 {/* Quote Mark */}
                 <div className="text-[#C2A878]/20 text-6xl md:text-7xl font-heading leading-none mb-4">
-                  "
+                  &ldquo;
                 </div>
                 
                 {/* Review Text - Playfair Display (serif) */}

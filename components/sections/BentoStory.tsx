@@ -72,9 +72,9 @@ export function BentoStory() {
                 </h3>
               </div>
               <p className="font-body text-base md:text-lg text-[#F2F0E9]/70 leading-relaxed max-w-2xl">
-                The "Black Olive Tree" of the Mediterranean embodies quiet strength and natural hospitality. 
+                The &quot;Black Olive Tree&quot; of the Mediterranean embodies quiet strength and natural hospitality. 
                 Like these ancient groves, we are rooted in tradition yet ever-reaching toward the light. 
-                From morning's first coffee to evening's last cocktail—we are your gathering place.
+                From morning&apos;s first coffee to evening&apos;s last cocktail—we are your gathering place.
               </p>
             </div>
           </motion.div>

@@ -226,7 +226,7 @@ function MenuItemRow({ item, index, isHovered, onHover, onLeave }: MenuItemRowPr
             </motion.h3>
             {item.featured && (
               <span className="text-[10px] uppercase tracking-wider text-[#BC5D41] bg-[#BC5D41]/10 px-2 py-0.5 rounded-full font-body">
-                Chef's Pick
+                Chef&apos;s Pick
               </span>
             )}
           </div>
